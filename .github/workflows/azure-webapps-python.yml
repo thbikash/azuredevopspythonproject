@@ -35,7 +35,7 @@ jobs:
 
       - name: Install Requirments
         run: |
-          pip install -r requirements.txt          
+          pip install -r 'requirements.txt'
 
       - name: Zip App
         run: zip -r app.zip .

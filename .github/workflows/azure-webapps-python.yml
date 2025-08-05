@@ -35,7 +35,7 @@ jobs:
 
       - name: Install Requirments
         run: |
-          pip install -r taskmanager/requirements.txt
+          pip install -r task-manager/requirements.txt
 
       - name: Zip App
         run: zip -r app.zip .

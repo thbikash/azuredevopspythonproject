@@ -7,10 +7,6 @@ app.secret_key = "secretkey"
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///tasks.db"
 db.init_app(app)
 
-@app.before_first_request
-def create_tables():
-    db.create_all()
-
 @app.route("/")
 def home():
     if "user_id" in session:
@@ -55,4 +51,7 @@ def logout():
     return redirect("/login")
 
 if __name__ == "__main__":
+    with app.app_context():
+        db.create_all()
     app.run(host="0.0.0.0", port=8000)
+

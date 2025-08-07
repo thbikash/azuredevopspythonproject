@@ -1,4 +1,4 @@
-name: Deploy Python App to Azure
+name: Deploy Python Application to Azure
 
 on:
   push:

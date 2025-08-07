@@ -1,26 +1,22 @@
-name: Build and Push Docker Image
+# Use official Python image
+FROM python:3.11-slim
 
-on:
-  push:
-    branches:
-      - main  # or your default branch
+# Set working directory
+WORKDIR /app
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
+# Install dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+# Copy the application code
+COPY . .
 
-    - name: Log in to Docker Hub
-      uses: docker/login-action@v3
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
+# Expose the port Flask runs on
+EXPOSE 8000
 
-    - name: Build Docker image
-      run: docker build -t bikashth/taskmanager:latest .
+# Set environment variable (optional but good practice)
+ENV FLASK_APP=app.py
+ENV FLASK_RUN_HOST=0.0.0.0
 
-    - name: Push Docker image to Docker Hub
-      run: docker push bikashth/taskmanager:latest
+# Command to run the app using Gunicorn
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "app:app"]

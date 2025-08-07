@@ -20,7 +20,7 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
 
     - name: Build Docker image
-      run: docker build -f ./Dockerfile -t bikashth/taskmanager:latest .
+      run: docker build -f -t bikashth/taskmanager:latest .
       
 
     - name: Push Docker image to Docker Hub

@@ -9,5 +9,4 @@ venv/
 .antenv/
 .git
 .gitignore
-Dockerfile
 .dockerignore

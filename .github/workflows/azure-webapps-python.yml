@@ -28,7 +28,7 @@ jobs:
         run: |
           az webapp config appsettings set \
             --name TaskManagerDemo \
-            --resource-group Development_RG \
+            --resource-group Development-RG \
             --settings SCM_DO_BUILD_DURING_DEPLOYMENT=true
 
       - name: Deploy to Azure Web App (Oryx Build)

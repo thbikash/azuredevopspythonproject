@@ -24,12 +24,12 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Enable Oryx build on Azure
-        run: |
-          az webapp config appsettings set \
-            --name TaskManagerDemo \
-            --resource-group Development-RG \
-            --settings SCM_DO_BUILD_DURING_DEPLOYMENT=true
+      # - name: Enable Oryx build on Azure
+      #   run: |
+      #     az webapp config appsettings set \
+      #       --name TaskManagerDemo \
+      #       --resource-group Development-RG \
+      #       --settings SCM_DO_BUILD_DURING_DEPLOYMENT=true
 
       - name: Deploy to Azure Web App (Oryx Build)
         uses: azure/webapps-deploy@v3

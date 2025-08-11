@@ -10,7 +10,7 @@ env/
 antenv/
 
 # SQLite database (optional)
-*.db
+#*.db
 
 # VS Code settings (optional)
 .vscode/

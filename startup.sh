@@ -6,7 +6,7 @@ if [ ! -d "antenv" ]; then
 fi
 source antenv/bin/activate
 
-# Upgrade pip (optional but good practice)
+# Upgrade pip
 pip install --upgrade pip
 
 # Install requirements

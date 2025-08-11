@@ -1,21 +1,25 @@
 #!/bin/bash
 
 # Create venv (if needed)
-python3 -m venv antenv
+if [ ! -d "antenv" ]; then
+    python3 -m venv antenv
+fi
 source antenv/bin/activate
 
+# Upgrade pip (optional but good practice)
+pip install --upgrade pip
+
 # Install requirements
-pip install --no-cache-dir -r requirements.txt
+pip install -r requirements.txt
 
-# Run migrations directly via Python (works without FLASK_APP)
-python3 - <<EOF
-from flask import Flask
-from app import app  # Import your Flask app instance
-from flask_migrate import upgrade
+# Ensure flask-migrate is installed
+if ! pip show flask-migrate > /dev/null 2>&1; then
+    echo "Installing flask-migrate..."
+    pip install flask-migrate
+fi
 
-with app.app_context():
-    upgrade()
-EOF
+# Run migrations
+flask db upgrade || echo "⚠️ Migration failed — continuing startup"
 
-# Start Gunicorn server
+# Start the app
 gunicorn --bind=0.0.0.0 --timeout 600 app:app

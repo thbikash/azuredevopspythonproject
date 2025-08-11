@@ -8,4 +8,5 @@ source antenv/bin/activate
 pip install -r requirements.txt
 
 # Run your app
+flask db upgrade
 gunicorn --bind=0.0.0.0 --timeout 600 app:app

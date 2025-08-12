@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Local CI/CD Dashboard</title>
+</head>
+<body>
+  <h1>Python App CI/CD Dashboard</h1>
+
+  <h2>Trigger CI</h2>
+  <form action="/trigger-ci" method="POST">
+    <button type="submit">Run CI (Package & Upload)</button>
+  </form>
+
+  <h2>Trigger CD</h2>
+  <form action="/trigger-cd" method="POST">
+    <input type="text" name="run_id" placeholder="Enter CI Run Number" required>
+    <button type="submit">Run CD (Deploy)</button>
+  </form>
+</body>
+</html>

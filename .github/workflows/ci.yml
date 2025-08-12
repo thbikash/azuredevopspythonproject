@@ -1,0 +1,32 @@
+name: Python App CI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Create tar package
+        run: |
+          tar -czvf app-${{ github.run_number }}.tar.gz \
+            app.py templates static requirements.txt startup.sh models.py create_db.py instance
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-app-${{ github.run_number }}
+          path: app-${{ github.run_number }}.tar.gz

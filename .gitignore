@@ -18,3 +18,6 @@ antenv/
 # OS-specific files
 .DS_Store
 Thumbs.db
+
+#Secrets and Variables
+.env

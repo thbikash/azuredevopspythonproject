@@ -1,0 +1,29 @@
+name: Python App CD
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: 'GitHub run number from CI job'
+        required: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: python-app-${{ github.event.inputs.run_id }}
+
+      - name: Extract package
+        run: tar -xzvf app-*.tar.gz
+
+      # LOCAL TESTING ONLY
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run Flask App locally
+        run: nohup python app.py &

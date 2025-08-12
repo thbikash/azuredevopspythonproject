@@ -11,7 +11,7 @@ db.init_app(app)
 @app.route("/")
 def home():
     if "user_id" in session:
-        return f'<h1>Welcome, User ID: {session["user_id"]}!, email</h1><a href="/logout">Logout</a>'
+        return f'<h1>Welcome, {session["user_id"]}!</h1><a href="/logout">Logout</a>'
     return redirect("/login")
 
 @app.route("/login", methods=["GET", "POST"])
@@ -21,7 +21,8 @@ def login():
         password = request.form["password"]
         user = User.query.filter_by(email=email).first()
         if user and check_password_hash(user.password, password):
-            session["user_id"] = user.id
+           
+            session["user_id"] = email
             return redirect("/")
     return render_template("login.html")
 

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ workflow }} Workflow Runs</title>
+</head>
+<body>
+    <h1>{{ workflow }} Workflow Runs</h1>
+    <table border="1" cellpadding="5" cellspacing="0">
+        <tr>
+            <th>Run ID</th>
+            <th>Status</th>
+            <th>Conclusion</th>
+            <th>Created At</th>
+            <th>Link</th>
+        </tr>
+        {% for run in runs %}
+        <tr>
+            <td>{{ run.id }}</td>
+            <td>{{ run.status }}</td>
+            <td>{{ run.conclusion or 'N/A' }}</td>
+            <td>{{ run.created_at }}</td>
+            <td><a href="{{ run.html_url }}" target="_blank">View Logs</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+    <a href="/">Back to Dashboard</a>
+</body>
+</html>

@@ -34,3 +34,17 @@ def trigger_workflow(workflow_file, ref=REF, inputs=None):
         payload["inputs"] = inputs
     resp = requests.post(url, headers=headers, json=payload)
     return resp.status_code, resp.text
+
+def get_workflow_runs(workflow_file, branch=REF, per_page=10):
+    token = get_installation_token()
+    url = f"{BASE_URL}/repos/{REPO_OWNER}/{REPO_NAME}/actions/workflows/{workflow_file}/runs"
+    headers = {"Authorization": f"token {token}", "Accept": "application/vnd.github+json"}
+    params = {
+        "branch": branch,
+        "per_page": per_page,
+        "page": 1,
+    }
+    resp = requests.get(url, headers=headers, params=params)
+    resp.raise_for_status()
+    return resp.json()["workflow_runs"]
+

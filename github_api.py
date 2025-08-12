@@ -29,7 +29,7 @@ def get_installation_token():
     resp.raise_for_status()
     return resp.json()["token"]
 
-def trigger_workflow(workflow_file, ref="main", inputs=None):
+def trigger_workflow(workflow_file, ref="master", inputs=None):
     """Trigger a GitHub Actions workflow."""
     token = get_installation_token()
     url = f"{BASE_URL}/repos/{REPO_OWNER}/{REPO_NAME}/actions/workflows/{workflow_file}/dispatches"

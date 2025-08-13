@@ -2,9 +2,30 @@
 <html>
 <head>
     <title>{{ workflow }} Workflow Runs</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script>
+        function filterStatus() {
+        const filter = document.getElementById('statusFilter').value.toLowerCase();
+        const rows = document.querySelectorAll('table tbody tr');
+        rows.forEach(row => {
+            const status = row.querySelector('.status').textContent.toLowerCase();
+            row.style.display = status.includes(filter) || filter === 'all' ? '' : 'none';
+        });
+        }
+    </script>
+
 </head>
 <body>
     <h1>{{ workflow }} Workflow Runs</h1>
+    <label for="statusFilter">Filter by Status:</label>
+    <select id="statusFilter" onchange="filterStatus()">
+        <option value="all">All</option>
+        <option value="completed">Completed</option>
+        <option value="in_progress">In Progress</option>
+        <option value="queued">Queued</option>
+        <option value="failure">Failure</option>
+    </select>
+
     <table border="1" cellpadding="5" cellspacing="0">
         <tr>
             <th>Run ID</th>
@@ -14,13 +35,21 @@
             <th>Link</th>
         </tr>
         {% for run in runs %}
-        <tr>
+        <!-- <tr>
             <td>{{ run.id }}</td>
             <td>{{ run.status }}</td>
             <td>{{ run.conclusion or 'N/A' }}</td>
             <td>{{ run.created_at }}</td>
             <td><a href="{{ run.html_url }}" target="_blank">View Logs</a></td>
-        </tr>
+        </tr> -->
+
+        <tr>
+  <td>{{ run.id }}</td>
+  <td class="status status-{{ run.status|lower|replace(' ', '_') }}">{{ run.status }}</td>
+  <td>{{ run.conclusion or 'N/A' }}</td>
+  <td>{{ run.created_at }}</td>
+  <td><a href="{{ run.html_url }}" target="_blank">View Logs</a></td>
+</tr>
         {% endfor %}
     </table>
     <a href="/">Back to Dashboard</a>

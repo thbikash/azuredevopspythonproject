@@ -2,7 +2,9 @@ from flask import Flask, render_template, request
 from github_api import trigger_workflow, get_workflow_runs
 
 
-app = Flask(__name__, template_folder="dashboard_templates")
+# app = Flask(__name__, template_folder="dashboard_templates")
+app = Flask(__name__, template_folder="dashboard_templates", static_folder="dashboard_templates/static")
+
 
 @app.route("/")
 def index():
@@ -10,8 +12,13 @@ def index():
 
 @app.route("/trigger-ci", methods=["POST"])
 def trigger_ci():
-    status, text = trigger_workflow("ci.yml")
+    branch = request.form.get("branch")
+    inputs = {
+        "branch": branch
+    }
+    status, text = trigger_workflow("ci.yml", inputs=inputs)
     return f"CI Triggered → Status {status}<br>{text}"
+
 
 @app.route("/trigger-cd", methods=["POST"])
 def trigger_cd():

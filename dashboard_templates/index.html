@@ -8,6 +8,9 @@
 
   <h2>Trigger CI</h2>
   <form action="/trigger-ci" method="POST">
+    <label for="branch">Branch:</label>
+    <input type="text" id="branch" name="branch" value="master" required><br><br>
+
     <button type="submit">Run CI (Package & Upload)</button>
   </form>
 

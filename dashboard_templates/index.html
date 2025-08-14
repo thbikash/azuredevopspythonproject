@@ -5,8 +5,9 @@
 </head>
 <body>
   <h1>Python App CI/CD Dashboard</h1>
+   <p>Logged in as: {{ user.email }} | <a href="{{ url_for('logout') }}">Logout</a></p>
 
-  <h2>Trigger CI</h2>
+   <h2>Trigger CI</h2>
   <form action="/trigger-ci" method="POST">
     <label for="branch">Branch:</label>
     <input type="text" id="branch" name="branch" value="master" required><br><br>

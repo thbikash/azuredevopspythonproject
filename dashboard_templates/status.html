@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+     <p>Logged in as: {{ user.email }} | <a href="{{ url_for('logout') }}">Logout</a></p>
     <title>{{ workflow }} Workflow Runs</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <script>
@@ -26,13 +27,18 @@
         <option value="failure">Failure</option>
     </select>
 
+    <h2>{{ workflow.upper() }} Workflow Runs</h2>
+    <p>Logged in as: {{ user.email }} | <a href="{{ url_for('logout') }}">Logout</a></p>
+
     <table border="1" cellpadding="5" cellspacing="0">
         <tr>
-            <th>Run ID</th>
+            <th>Branch / Run ID</th>
+            <th>Timestamp</th>
+            <!-- <th>Run ID</th>
             <th>Status</th>
             <th>Conclusion</th>
             <th>Created At</th>
-            <th>Link</th>
+            <th>Link</th> -->
         </tr>
         {% for run in runs %}
         <!-- <tr>
@@ -43,12 +49,14 @@
             <td><a href="{{ run.html_url }}" target="_blank">View Logs</a></td>
         </tr> -->
 
-        <tr>
-  <td>{{ run.id }}</td>
+<tr>
+  <td>{{ run.branch or run.run_id }}</td>
+  <td>{{ run.timestamp }}</td>
+  <!-- <td>{{ run.id }}</td>
   <td class="status status-{{ run.status|lower|replace(' ', '_') }}">{{ run.status }}</td>
   <td>{{ run.conclusion or 'N/A' }}</td>
   <td>{{ run.created_at }}</td>
-  <td><a href="{{ run.html_url }}" target="_blank">View Logs</a></td>
+  <td><a href="{{ run.html_url }}" target="_blank">View Logs</a></td> -->
 </tr>
         {% endfor %}
     </table>

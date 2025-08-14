@@ -12,4 +12,3 @@ GITHUB_PRIVATE_KEY = os.getenv("GITHUB_PRIVATE_KEY")  # Later: GitHub App privat
 # Repo details
 REPO_OWNER = os.getenv("REPO_OWNER", "username")
 REPO_NAME = os.getenv("REPO_NAME", "azuredevopspythonproject")
-# REF = os.getenv("REF", "master")

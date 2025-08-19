@@ -25,3 +25,18 @@ class WorkflowRun(db.Model):
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
     user = db.relationship('User', backref=db.backref('runs', lazy=True))
+
+class Project(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(150), nullable=False)
+    repo_owner = db.Column(db.String(150), nullable=False)
+    repo_name = db.Column(db.String(150), nullable=False)
+    default_branch = db.Column(db.String(150), default="main")
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    workflow_file = db.Column(db.String(255), nullable=False)
+
+    def __repr__(self):
+        return f"<Project {self.name}>"
+
+
+   

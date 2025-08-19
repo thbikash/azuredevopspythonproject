@@ -1,65 +1,63 @@
 <!DOCTYPE html>
 <html>
 <head>
-     <p>Logged in as: {{ user.email }} | <a href="{{ url_for('logout') }}">Logout</a></p>
-    <title>{{ workflow }} Workflow Runs</title>
+    <title>
+        {% if workflow %}
+            {{ workflow }} Workflow Runs
+        {% elif project %}
+            {{ project.repo_owner }}/{{ project.repo_name }} Workflow Runs
+        {% else %}
+            Workflow Runs
+        {% endif %}
+    </title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <script>
         function filterStatus() {
-        const filter = document.getElementById('statusFilter').value.toLowerCase();
-        const rows = document.querySelectorAll('table tbody tr');
-        rows.forEach(row => {
-            const status = row.querySelector('.status').textContent.toLowerCase();
-            row.style.display = status.includes(filter) || filter === 'all' ? '' : 'none';
-        });
+            const filter = document.getElementById('statusFilter').value.toLowerCase();
+            const rows = document.querySelectorAll('table tbody tr');
+            rows.forEach(row => {
+                const status = row.querySelector('.status').textContent.toLowerCase();
+                row.style.display = status.includes(filter) || filter === 'all' ? '' : 'none';
+            });
         }
-    </script>
-
+    </script> 
 </head>
 <body>
-    <h1>{{ workflow }} Workflow Runs</h1>
-    <label for="statusFilter">Filter by Status:</label>
-    <select id="statusFilter" onchange="filterStatus()">
-        <option value="all">All</option>
-        <option value="completed">Completed</option>
-        <option value="in_progress">In Progress</option>
-        <option value="queued">Queued</option>
-        <option value="failure">Failure</option>
-    </select>
+    {% if project %}
+        <h2>Workflow Runs for {{ project.repo_owner }}/{{ project.repo_name }}</h2>
+    {% elif workflow %}
+        <h2>{{ workflow }} Workflow Runs</h2>
+    {% else %}
+        <h2>Workflow Runs</h2>
+    {% endif %}
 
-    <h2>{{ workflow.upper() }} Workflow Runs</h2>
-    <p>Logged in as: {{ user.email }} | <a href="{{ url_for('logout') }}">Logout</a></p>
-
-    <table border="1" cellpadding="5" cellspacing="0">
+    {% if runs %}
+    <table border="1">
         <tr>
-            <th>Branch / Run ID</th>
-            <th>Timestamp</th>
-            <!-- <th>Run ID</th>
+            <th>Build ID</th>
+            <th>Run Number</th>
             <th>Status</th>
             <th>Conclusion</th>
+            <th>Branch</th>
             <th>Created At</th>
-            <th>Link</th> -->
+            <th>URL</th>
         </tr>
         {% for run in runs %}
-        <!-- <tr>
+        <tr>
             <td>{{ run.id }}</td>
-            <td>{{ run.status }}</td>
-            <td>{{ run.conclusion or 'N/A' }}</td>
+            <td>{{ run.run_number }}</td>
+            <td class="status">{{ run.status }}</td>
+            <td>{{ run.conclusion }}</td>
+            <td>{{ run.head_branch }}</td>
             <td>{{ run.created_at }}</td>
-            <td><a href="{{ run.html_url }}" target="_blank">View Logs</a></td>
-        </tr> -->
-
-<tr>
-  <td>{{ run.branch or run.run_id }}</td>
-  <td>{{ run.timestamp }}</td>
-  <!-- <td>{{ run.id }}</td>
-  <td class="status status-{{ run.status|lower|replace(' ', '_') }}">{{ run.status }}</td>
-  <td>{{ run.conclusion or 'N/A' }}</td>
-  <td>{{ run.created_at }}</td>
-  <td><a href="{{ run.html_url }}" target="_blank">View Logs</a></td> -->
-</tr>
+            <td><a href="{{ run.html_url }}" target="_blank">View on GitHub</a></td>
+        </tr>
         {% endfor %}
     </table>
+    {% else %}
+        <p>No workflow runs found.</p>
+    {% endif %}
+
     <a href="/">Back to Dashboard</a>
 </body>
 </html>

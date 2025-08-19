@@ -5,28 +5,65 @@
 </head>
 <body>
   <h1>Python App CI/CD Dashboard</h1>
-   <p>Logged in as: {{ user.email }} | <a href="{{ url_for('logout') }}">Logout</a></p>
+    <p>Logged in as: {{ user.email }} | <a href="{{ url_for('logout') }}">Logout</a></p>
 
-   <h2>Trigger CI</h2>
+    <h2>Trigger CI</h2>
   <form action="/trigger-ci" method="POST">
+  <label for="repo">Select Repository:</label>
+  <select name="repo_name" id="repo">
+    {% for repo in repos %}
+      <option value="{{ repo.name }}">{{ repo.name }}</option>
+    {% endfor %}
+  </select>
     <label for="branch">Branch:</label>
-    <input type="text" id="branch" name="branch" value="master" required><br><br>
-
+    <input type="text" id="branch" name="branch" value="master" required>
     <button type="submit">Run CI (Package & Upload)</button>
   </form>
 
-  <h2>Trigger CD</h2>
-  <form action="/trigger-cd" method="POST">
-    <input type="text" name="run_id" placeholder="Enter CI Run Number" required>
-    <button type="submit">Run CD (Deploy)</button>
-  </form>
+<h2>Trigger CD</h2>
+<form action="/trigger-cd" method="POST">
+  <!-- Build Selection Dropdown -->
+  <label for="run_id">Select CI Build:</label>
+  <select name="run_id" id="run_id" required>
+    {% for project in projects %}
+      {% for run in get_workflow_runs('ci.yml', project.repo_owner, project.repo_name) %}
+        <option value="{{ run.id }}|{{ project.repo_owner }}|{{ project.repo_name }}">
+          {{ project.name }} → Build#{{ run.id }} → Run#{{ run.run_number }} ({{ run.status }})
+        </option>
+      {% endfor %}
+    {% endfor %}
+  </select>
 
-  <h2>Workflow Status</h2>
-<ul>
-  <li><a href="/status/ci">CI Workflow Runs</a></li>
-  <li><a href="/status/cd">CD Workflow Runs</a></li>
-</ul>
+  <!-- 
+    NEW: Add a dropdown for selecting the deployment target.
+    The 'value' should be a simple identifier (e.g., 'azure', 'vm')
+    that you can easily check in your cd.yml file.
+  -->
+  <label for="deployment_target">Deployment Target:</label>
+  <select name="deployment_target" id="deployment_target" required>
+      <option value="azure">Azure App Service</option>
+      <option value="vm">Virtual Machine</option>
+  </select>
 
+  <button type="submit">Run CD (Deploy)</button>
+</form>
+
+
+<h2>Projects</h2>
+<table border="1" cellpadding="8" cellspacing="0">
+  <tr>
+    <th>Project Name</th>
+    <th>Repository</th>
+    <th>Action</th>
+  </tr>
+  {% for project in projects %}
+  <tr>
+    <td>{{ project.name }}</td>
+    <td>{{ project.repo_owner }}/{{ project.repo_name }}</td>
+    <td><a href="{{ url_for('view_runs', project_id=project.id) }}">View Builds</a></td>
+  </tr>
+  {% endfor %}
+</table>
 
 </body>
 </html>

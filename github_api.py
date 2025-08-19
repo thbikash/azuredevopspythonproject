@@ -28,42 +28,60 @@ def get_installation_token():
     return resp.json()["token"]
 
 @lru_cache(maxsize=1)
-def get_default_branch():
-    """Fetch the repo's default branch (no hard-coding). Cached for this process."""
+def get_default_branch(owner=None, repo=None):
+    owner = owner or REPO_OWNER
+    repo = repo or REPO_NAME
     token = get_installation_token()
     headers = {"Authorization": f"token {token}", "Accept": "application/vnd.github+json"}
-    resp = requests.get(f"{BASE_URL}/repos/{REPO_OWNER}/{REPO_NAME}", headers=headers)
+    resp = requests.get(f"{BASE_URL}/repos/{owner}/{repo}", headers=headers)
     resp.raise_for_status()
     return resp.json()["default_branch"]
 
-def trigger_workflow(workflow_file, inputs=None, ref=None):
+def trigger_workflow(workflow_file, owner=None, repo=None, ref=None, inputs=None):
     """
-    ref: branch that contains the workflow file (defaults to the repo's default branch).
-    inputs: dict of workflow_dispatch inputs (e.g., {"branch": "feature/foo"})
+    Trigger a GitHub Actions workflow for any repo.
     """
+    owner = owner or REPO_OWNER
+    repo = repo or REPO_NAME
+    ref = ref or get_default_branch(owner, repo)
     token = get_installation_token()
     headers = {"Authorization": f"token {token}", "Accept": "application/vnd.github+json"}
-
-    if ref is None:
-        ref = get_default_branch()  # <- dynamic, no hard-coding
 
     payload = {"ref": ref}
     if inputs:
         payload["inputs"] = inputs
 
-    url = f"{BASE_URL}/repos/{REPO_OWNER}/{REPO_NAME}/actions/workflows/{workflow_file}/dispatches"
+    url = f"{BASE_URL}/repos/{owner}/{repo}/actions/workflows/{workflow_file}/dispatches"
     resp = requests.post(url, headers=headers, json=payload)
     return resp.status_code, resp.text
 
-def get_workflow_runs(workflow_file, branch=None, per_page=10):
+def get_workflow_runs(workflow_file, owner, repo, branch=None, per_page=10):
     token = get_installation_token()
     headers = {"Authorization": f"token {token}", "Accept": "application/vnd.github+json"}
 
     if branch is None:
-        branch = get_default_branch()
+        # fetch default branch dynamically
+        resp = requests.get(f"{BASE_URL}/repos/{owner}/{repo}", headers=headers)
+        resp.raise_for_status()
+        branch = resp.json()["default_branch"]
 
     params = {"branch": branch, "per_page": per_page, "page": 1}
-    url = f"{BASE_URL}/repos/{REPO_OWNER}/{REPO_NAME}/actions/workflows/{workflow_file}/runs"
+    url = f"{BASE_URL}/repos/{owner}/{repo}/actions/workflows/{workflow_file}/runs"
     resp = requests.get(url, headers=headers, params=params)
     resp.raise_for_status()
     return resp.json()["workflow_runs"]
+
+import requests
+from config import GITHUB_TOKEN
+
+def get_user_repos(owner=None):
+    headers = {"Authorization": f"token {GITHUB_TOKEN}"}
+    if owner:
+        url = f"https://api.github.com/users/{owner}/repos"
+    else:
+        url = "https://api.github.com/user/repos"  # for authenticated user
+    resp = requests.get(url, headers=headers)
+    resp.raise_for_status()
+    repos = resp.json()
+    # Return minimal info for dashboard
+    return [{"name": r["name"], "full_name": r["full_name"], "default_branch": r["default_branch"]} for r in repos]

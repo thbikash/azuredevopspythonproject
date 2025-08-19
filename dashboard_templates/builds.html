@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ project.name }} - Builds</title>
+</head>
+<body>
+<h1>{{ project.name }} - CI Builds</h1>
+<p>Logged in as: {{ user.email }} | <a href="{{ url_for('logout') }}">Logout</a></p>
+
+<table border="1" cellpadding="5">
+    <tr>
+        <th>Run ID</th>
+        <th>Branch</th>
+        <th>Status</th>
+        <th>Conclusion</th>
+        <th>Created At</th>
+        <th>Link</th>
+    </tr>
+    {% for run in runs %}
+    <tr>
+        <td>{{ run.id }}</td>
+        <td>{{ run.head_branch }}</td>
+        <td>{{ run.status }}</td>
+        <td>{{ run.conclusion or 'N/A' }}</td>
+        <td>{{ run.created_at }}</td>
+        <td><a href="{{ run.html_url }}" target="_blank">View Logs</a></td>
+    </tr>
+    {% endfor %}
+</table>
+
+<a href="{{ url_for('index') }}">⬅ Back to Dashboard</a>
+</body>
+</html>
